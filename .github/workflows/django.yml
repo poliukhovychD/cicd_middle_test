@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "master" ]
   pull_request:
-    branches: [ "master"" ]
+    branches: [ "master" ]
 
 jobs:
   build:
@@ -18,9 +18,12 @@ jobs:
       postgres_main:
         image: postgres:12
         env:
-          POSTGRES_USER: admin
-          POSTGRES_PASSWORD: 1234
-          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST: localhost
+          POSTGRES_DB: djtesting
+          DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres'
         ports:
           - 5432:5432
         options: >-
@@ -44,5 +47,6 @@ jobs:
 
       - name: Run Tests
         run: |
+          export SECRET_KEY="${{ secrets.SECRET_KEY ))"
           python manage.py test
 #dsfv
